@@ -60,18 +60,18 @@ func server(c *cli.Context) error {
 
 	// must configure the drone_host variable
 	if c.String("server-host") == "" {
-		logrus.Fatalln("DRONE_HOST/DRONE_SERVER_HOST/WOODPECKER_HOST/WOODPECKER_SERVER_HOST is not properly configured")
+		logrus.Fatalln("WOODPECKER_SERVER_HOST is not properly configured")
 	}
 
 	if !strings.Contains(c.String("server-host"), "://") {
 		logrus.Fatalln(
-			"DRONE_HOST/DRONE_SERVER_HOST/WOODPECKER_HOST/WOODPECKER_SERVER_HOST must be <scheme>://<hostname> format",
+			"WOODPECKER_SERVER_HOST must be <scheme>://<hostname> format",
 		)
 	}
 
 	if strings.HasSuffix(c.String("server-host"), "/") {
 		logrus.Fatalln(
-			"DRONE_HOST/DRONE_SERVER_HOST/WOODPECKER_HOST/WOODPECKER_SERVER_HOST must not have trailing slash",
+			"WOODPECKER_SERVER_HOST must not have trailing slash",
 		)
 	}
 

@@ -48,13 +48,14 @@ import (
 
 var Config = struct {
 	Services struct {
-		Pubsub     pubsub.Publisher
-		Queue      queue.Queue
-		Logs       logging.Log
-		Senders    model.SenderService
-		Secrets    model.SecretService
-		Registries model.RegistryService
-		Environ    model.EnvironService
+		Pubsub        pubsub.Publisher
+		Queue         queue.Queue
+		Logs          logging.Log
+		Senders       model.SenderService
+		GlobalSecrets model.GlobalSecretService
+		Secrets       model.SecretService
+		Registries    model.RegistryService
+		Environ       model.EnvironService
 	}
 	Storage struct {
 		// Users  model.UserStore

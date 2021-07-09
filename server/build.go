@@ -285,6 +285,12 @@ func PostApproval(c *gin.Context) {
 	if err != nil {
 		logrus.Debugf("Error getting secrets for %s#%d. %s", repo.FullName, build.Number, err)
 	}
+
+	globalsecs, err := Config.Services.GlobalSecrets.GlobalSecretListBuild(build)
+	if err != nil {
+		logrus.Debugf("Error getting global secrets for #%d. %s", build.Number, err)
+	}
+
 	regs, err := Config.Services.Registries.RegistryList(repo)
 	if err != nil {
 		logrus.Debugf("Error getting registry credentials for %s#%d. %s", repo.FullName, build.Number, err)
@@ -303,15 +309,16 @@ func PostApproval(c *gin.Context) {
 	}
 
 	b := procBuilder{
-		Repo:  repo,
-		Curr:  build,
-		Last:  last,
-		Netrc: netrc,
-		Secs:  secs,
-		Regs:  regs,
-		Link:  httputil.GetURL(c.Request),
-		Yamls: yamls,
-		Envs:  envs,
+		Repo:       repo,
+		Curr:       build,
+		Last:       last,
+		Netrc:      netrc,
+		Secs:       secs,
+		GlobalSecs: globalsecs,
+		Regs:       regs,
+		Link:       httputil.GetURL(c.Request),
+		Yamls:      yamls,
+		Envs:       envs,
 	}
 	buildItems, err := b.Build()
 	if err != nil {
@@ -495,6 +502,10 @@ func PostBuild(c *gin.Context) {
 	if err != nil {
 		logrus.Debugf("Error getting secrets for %s#%d. %s", repo.FullName, build.Number, err)
 	}
+	globalsecs, err := Config.Services.GlobalSecrets.GlobalSecretListBuild(build)
+	if err != nil {
+		logrus.Debugf("Error getting global secrets for #%d. %s", build.Number, err)
+	}
 	regs, err := Config.Services.Registries.RegistryList(repo)
 	if err != nil {
 		logrus.Debugf("Error getting registry credentials for %s#%d. %s", repo.FullName, build.Number, err)
@@ -512,15 +523,16 @@ func PostBuild(c *gin.Context) {
 	}
 
 	b := procBuilder{
-		Repo:  repo,
-		Curr:  build,
-		Last:  last,
-		Netrc: netrc,
-		Secs:  secs,
-		Regs:  regs,
-		Link:  httputil.GetURL(c.Request),
-		Yamls: yamls,
-		Envs:  buildParams,
+		Repo:       repo,
+		Curr:       build,
+		Last:       last,
+		Netrc:      netrc,
+		Secs:       secs,
+		GlobalSecs: globalsecs,
+		Regs:       regs,
+		Link:       httputil.GetURL(c.Request),
+		Yamls:      yamls,
+		Envs:       buildParams,
 	}
 	buildItems, err := b.Build()
 	if err != nil {

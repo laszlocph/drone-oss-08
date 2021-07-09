@@ -123,6 +123,12 @@ type Store interface {
 	SenderUpdate(*model.Sender) error
 	SenderDelete(*model.Sender) error
 
+	GlobalSecretFind(string) (*model.GlobalSecret, error)
+	GlobalSecretList() ([]*model.GlobalSecret, error)
+	GlobalSecretCreate(*model.GlobalSecret) error
+	GlobalSecretUpdate(*model.GlobalSecret) error
+	GlobalSecretDelete(*model.GlobalSecret) error
+
 	SecretFind(*model.Repo, string) (*model.Secret, error)
 	SecretList(*model.Repo) ([]*model.Secret, error)
 	SecretCreate(*model.Secret) error

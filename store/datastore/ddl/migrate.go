@@ -105,6 +105,8 @@ INSERT INTO migrations (name) VALUES
 ,('create-table-agents')
 ,('create-table-senders')
 ,('create-index-sender-repos')
+,('create-table-globalsecrets')
+,('create-index-globalsecrets-name')
 `
 
 var createMigrationsTable = `

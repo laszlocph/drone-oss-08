@@ -202,6 +202,29 @@
           }
         },
         {
+          key: "getGlobalSecretList",
+          value: function getGlobalSecretList() {
+            return this._get("/api/globalsecrets");
+          }
+        },
+        {
+          key: "createGlobalSecret",
+          value: function createGlobalSecret(secret) {
+            return this._post(
+              "/api/globalsecrets",
+              secret
+            );
+          }
+        },
+        {
+          key: "deleteGlobalSecret",
+          value: function deleteGlobalSecret(secret) {
+            return this._delete(
+              "/api/globalsecrets/" + secret
+            );
+          }
+        },
+        {
           key: "getSecretList",
           value: function getSecretList(owner, repo) {
             return this._get("/api/repos/" + owner + "/" + repo + "/secrets");

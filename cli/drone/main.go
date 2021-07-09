@@ -7,6 +7,7 @@ import (
 	"github.com/woodpecker-ci/woodpecker/cli/drone/build"
 	"github.com/woodpecker-ci/woodpecker/cli/drone/deploy"
 	"github.com/woodpecker-ci/woodpecker/cli/drone/exec"
+	"github.com/woodpecker-ci/woodpecker/cli/drone/globalsecret"
 	"github.com/woodpecker-ci/woodpecker/cli/drone/info"
 	"github.com/woodpecker-ci/woodpecker/cli/drone/log"
 	"github.com/woodpecker-ci/woodpecker/cli/drone/registry"
@@ -66,6 +67,7 @@ func main() {
 		info.Command,
 		registry.Command,
 		secret.Command,
+		globalsecret.Command,
 		repo.Command,
 		user.Command,
 	}

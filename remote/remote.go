@@ -14,7 +14,7 @@
 
 package remote
 
-//go:generate mockery -name Remote -output mock -case=underscore
+//go:generate mockery --name Remote --output mock --case=underscore
 
 import (
 	"net/http"

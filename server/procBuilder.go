@@ -34,15 +34,16 @@ import (
 
 // Takes the hook data and the yaml and returns in internal data model
 type procBuilder struct {
-	Repo  *model.Repo
-	Curr  *model.Build
-	Last  *model.Build
-	Netrc *model.Netrc
-	Secs  []*model.Secret
-	Regs  []*model.Registry
-	Link  string
-	Yamls []*remote.FileMeta
-	Envs  map[string]string
+	Repo       *model.Repo
+	Curr       *model.Build
+	Last       *model.Build
+	Netrc      *model.Netrc
+	Secs       []*model.Secret
+	GlobalSecs []*model.GlobalSecret
+	Regs       []*model.Registry
+	Link       string
+	Yamls      []*remote.FileMeta
+	Envs       map[string]string
 }
 
 type buildItem struct {
@@ -195,6 +196,20 @@ func (b *procBuilder) environmentVariables(metadata frontend.Metadata, axis matr
 
 func (b *procBuilder) toInternalRepresentation(parsed *yaml.Config, environ map[string]string, metadata frontend.Metadata, procID int64) *backend.Config {
 	var secrets []compiler.Secret
+
+	// Process global secrets
+	for _, sec := range b.GlobalSecs {
+		if !sec.Match(b.Curr.Event) {
+			continue
+		}
+		secrets = append(secrets, compiler.Secret{
+			Name:  sec.Name,
+			Value: sec.Value,
+			Match: sec.Images,
+		})
+	}
+
+	// Process repo secrets
 	for _, sec := range b.Secs {
 		if !sec.Match(b.Curr.Event) {
 			continue

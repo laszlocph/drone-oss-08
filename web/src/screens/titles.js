@@ -7,8 +7,13 @@ import Title from "react-title-component";
 export default function() {
   return (
     <Switch>
-      <Route path="/account/tokens" exact={true} component={accountTitle} />
+      <Route path="/account/token" exact={true} component={accountTitle} />
       <Route path="/account/repos" exact={true} component={accountRepos} />
+      <Route
+        path="/account/global-secrets"
+        exact={true}
+        component={accountGlobalSecrets}
+      />
       <Route path="/login" exact={false} component={loginTitle} />
       <Route path="/:owner/:repo" exact={false} component={repoTitle} />
       <Route path="/" exact={false} component={defautTitle} />
@@ -19,6 +24,10 @@ export default function() {
 const accountTitle = () => <Title render="Tokens | woodpecker" />;
 
 const accountRepos = () => <Title render="Repositories | woodpecker" />;
+
+const accountGlobalSecrets = () => (
+  <Title render="Global Secrets | woodpecker" />
+);
 
 const loginTitle = () => <Title render="Login | woodpecker" />;
 

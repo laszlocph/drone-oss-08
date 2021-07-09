@@ -241,6 +241,11 @@ func PostHook(c *gin.Context) {
 		logrus.Debugf("Error getting secrets for %s#%d. %s", repo.FullName, build.Number, err)
 	}
 
+	globalsecs, err := Config.Services.GlobalSecrets.GlobalSecretListBuild(build)
+	if err != nil {
+		logrus.Debugf("Error getting global secrets for #%d. %s", build.Number, err)
+	}
+
 	regs, err := Config.Services.Registries.RegistryList(repo)
 	if err != nil {
 		logrus.Debugf("Error getting registry credentials for %s#%d. %s", repo.FullName, build.Number, err)
@@ -250,15 +255,16 @@ func PostHook(c *gin.Context) {
 	last, _ := store.GetBuildLastBefore(c, repo, build.Branch, build.ID)
 
 	b := procBuilder{
-		Repo:  repo,
-		Curr:  build,
-		Last:  last,
-		Netrc: netrc,
-		Secs:  secs,
-		Regs:  regs,
-		Envs:  envs,
-		Link:  httputil.GetURL(c.Request),
-		Yamls: remoteYamlConfigs,
+		Repo:       repo,
+		Curr:       build,
+		Last:       last,
+		Netrc:      netrc,
+		Secs:       secs,
+		GlobalSecs: globalsecs,
+		Regs:       regs,
+		Envs:       envs,
+		Link:       httputil.GetURL(c.Request),
+		Yamls:      remoteYamlConfigs,
 	}
 	buildItems, err := b.Build()
 	if err != nil {
@@ -309,14 +315,15 @@ func branchFiltered(build *model.Build, remoteYamlConfigs []*remote.FileMeta) (b
 
 func zeroSteps(build *model.Build, remoteYamlConfigs []*remote.FileMeta) bool {
 	b := procBuilder{
-		Repo:  &model.Repo{},
-		Curr:  build,
-		Last:  &model.Build{},
-		Netrc: &model.Netrc{},
-		Secs:  []*model.Secret{},
-		Regs:  []*model.Registry{},
-		Link:  "",
-		Yamls: remoteYamlConfigs,
+		Repo:       &model.Repo{},
+		Curr:       build,
+		Last:       &model.Build{},
+		Netrc:      &model.Netrc{},
+		Secs:       []*model.Secret{},
+		GlobalSecs: []*model.GlobalSecret{},
+		Regs:       []*model.Registry{},
+		Link:       "",
+		Yamls:      remoteYamlConfigs,
 	}
 
 	buildItems, err := b.Build()

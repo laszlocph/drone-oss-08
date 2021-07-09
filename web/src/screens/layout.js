@@ -15,6 +15,7 @@ import RepoSettings from "screens/repo/screens/settings";
 import RepoBuilds from "screens/repo/screens/builds";
 import UserRepos, { UserRepoTitle } from "screens/user/screens/repos";
 import UserTokens from "screens/user/screens/tokens";
+import GlobalSecrets from "screens/user/screens/global-secrets";
 import RedirectRoot from "./redirect";
 
 import RepoHeader from "screens/repo/screens/builds/header";
@@ -160,6 +161,11 @@ export default class Default extends Component {
             <Route path="/account/token" exact={true} component={UserTokens} />
             <Route path="/account/repos" exact={true} component={UserRepos} />
             <Route
+              path="/account/global-secrets"
+              exact={true}
+              component={GlobalSecrets}
+            />
+            <Route
               path="/:owner/:repo/settings/secrets"
               exact={true}
               component={RepoSecrets}
@@ -196,6 +202,9 @@ export default class Default extends Component {
             <ul>
               <li>
                 <Link to="/account/repos">Repositories</Link>
+              </li>
+              <li>
+                <Link to="/account/global-secrets">Global Secrets</Link>
               </li>
               <li>
                 <Link to="/account/token">Token</Link>

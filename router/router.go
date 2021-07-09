@@ -193,6 +193,17 @@ func Load(mux *httptreemux.ContextMux, middleware ...gin.HandlerFunc) http.Handl
 		monitor.GET("", metrics.PromHandler())
 	}
 
+	globalsecrets := e.Group("/api/globalsecrets")
+	{
+		globalsecrets.Use(session.MustAdmin())
+		globalsecrets.GET("", server.GetGlobalSecretList)
+		globalsecrets.POST("", server.PostGlobalSecret)
+		globalsecrets.GET("/:secret", server.GetGlobalSecret)
+		globalsecrets.PATCH("/:secret", server.PatchGlobalSecret)
+		globalsecrets.DELETE("/:secret", server.DeleteGlobalSecret)
+
+	}
+
 	e.GET("/version", server.Version)
 	e.GET("/healthz", server.Health)
 

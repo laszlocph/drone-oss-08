@@ -26,6 +26,12 @@ const state = {
     data: {},
   },
 
+  globalSecrets: {
+    loaded: false,
+    error: undefined,
+    data: {},
+  },
+
   secrets: {
     loaded: false,
     error: undefined,

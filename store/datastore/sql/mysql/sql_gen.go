@@ -18,6 +18,9 @@ var index = map[string]string{
 	"files-find-proc-name":        filesFindProcName,
 	"files-find-proc-name-data":   filesFindProcNameData,
 	"files-delete-build":          filesDeleteBuild,
+	"global-secret-find":          globalSecretFind,
+	"global-secret-find-name":     globalSecretFindName,
+	"global-secret-delete":        globalSecretDelete,
 	"logs-find-proc":              logsFindProc,
 	"perms-find-user":             permsFindUser,
 	"perms-find-user-repo":        permsFindUserRepo,
@@ -223,6 +226,35 @@ WHERE file_proc_id = ?
 
 var filesDeleteBuild = `
 DELETE FROM files WHERE file_build_id = ?
+`
+
+var globalSecretFind = `
+SELECT
+ secret_id
+,secret_name
+,secret_value
+,secret_images
+,secret_events
+,secret_conceal
+,secret_skip_verify
+FROM global_secrets
+`
+
+var globalSecretFindName = `
+SELECT
+secret_id
+,secret_name
+,secret_value
+,secret_images
+,secret_events
+,secret_conceal
+,secret_skip_verify
+FROM global_secrets
+WHERE secret_name = ?
+`
+
+var globalSecretDelete = `
+DELETE FROM global_secrets WHERE secret_id = ?
 `
 
 var logsFindProc = `

@@ -31,11 +31,12 @@ func TestMultilineEnvsubst(t *testing.T) {
 			Message: `aaa
 bbb`,
 		},
-		Last:  &model.Build{},
-		Netrc: &model.Netrc{},
-		Secs:  []*model.Secret{},
-		Regs:  []*model.Registry{},
-		Link:  "",
+		Last:       &model.Build{},
+		Netrc:      &model.Netrc{},
+		Secs:       []*model.Secret{},
+		GlobalSecs: []*model.GlobalSecret{},
+		Regs:       []*model.Registry{},
+		Link:       "",
 		Yamls: []*remote.FileMeta{
 			&remote.FileMeta{Data: []byte(`
 pipeline:
@@ -62,13 +63,14 @@ func TestMultiPipeline(t *testing.T) {
 	t.Parallel()
 
 	b := procBuilder{
-		Repo:  &model.Repo{},
-		Curr:  &model.Build{},
-		Last:  &model.Build{},
-		Netrc: &model.Netrc{},
-		Secs:  []*model.Secret{},
-		Regs:  []*model.Registry{},
-		Link:  "",
+		Repo:       &model.Repo{},
+		Curr:       &model.Build{},
+		Last:       &model.Build{},
+		Netrc:      &model.Netrc{},
+		Secs:       []*model.Secret{},
+		GlobalSecs: []*model.GlobalSecret{},
+		Regs:       []*model.Registry{},
+		Link:       "",
 		Yamls: []*remote.FileMeta{
 			&remote.FileMeta{Data: []byte(`
 pipeline:
@@ -96,13 +98,14 @@ func TestDependsOn(t *testing.T) {
 	t.Parallel()
 
 	b := procBuilder{
-		Repo:  &model.Repo{},
-		Curr:  &model.Build{},
-		Last:  &model.Build{},
-		Netrc: &model.Netrc{},
-		Secs:  []*model.Secret{},
-		Regs:  []*model.Registry{},
-		Link:  "",
+		Repo:       &model.Repo{},
+		Curr:       &model.Build{},
+		Last:       &model.Build{},
+		Netrc:      &model.Netrc{},
+		Secs:       []*model.Secret{},
+		GlobalSecs: []*model.GlobalSecret{},
+		Regs:       []*model.Registry{},
+		Link:       "",
 		Yamls: []*remote.FileMeta{
 			&remote.FileMeta{Name: "lint", Data: []byte(`
 pipeline:
@@ -142,13 +145,14 @@ func TestRunsOn(t *testing.T) {
 	t.Parallel()
 
 	b := procBuilder{
-		Repo:  &model.Repo{},
-		Curr:  &model.Build{},
-		Last:  &model.Build{},
-		Netrc: &model.Netrc{},
-		Secs:  []*model.Secret{},
-		Regs:  []*model.Registry{},
-		Link:  "",
+		Repo:       &model.Repo{},
+		Curr:       &model.Build{},
+		Last:       &model.Build{},
+		Netrc:      &model.Netrc{},
+		Secs:       []*model.Secret{},
+		GlobalSecs: []*model.GlobalSecret{},
+		Regs:       []*model.Registry{},
+		Link:       "",
 		Yamls: []*remote.FileMeta{
 			&remote.FileMeta{Data: []byte(`
 pipeline:
@@ -178,13 +182,14 @@ func TestBranchFilter(t *testing.T) {
 	t.Parallel()
 
 	b := procBuilder{
-		Repo:  &model.Repo{},
-		Curr:  &model.Build{Branch: "dev"},
-		Last:  &model.Build{},
-		Netrc: &model.Netrc{},
-		Secs:  []*model.Secret{},
-		Regs:  []*model.Registry{},
-		Link:  "",
+		Repo:       &model.Repo{},
+		Curr:       &model.Build{Branch: "dev"},
+		Last:       &model.Build{},
+		Netrc:      &model.Netrc{},
+		Secs:       []*model.Secret{},
+		GlobalSecs: []*model.GlobalSecret{},
+		Regs:       []*model.Registry{},
+		Link:       "",
 		Yamls: []*remote.FileMeta{
 			&remote.FileMeta{Data: []byte(`
 pipeline:
@@ -226,13 +231,14 @@ func TestZeroSteps(t *testing.T) {
 	build := &model.Build{Branch: "dev"}
 
 	b := procBuilder{
-		Repo:  &model.Repo{},
-		Curr:  build,
-		Last:  &model.Build{},
-		Netrc: &model.Netrc{},
-		Secs:  []*model.Secret{},
-		Regs:  []*model.Registry{},
-		Link:  "",
+		Repo:       &model.Repo{},
+		Curr:       build,
+		Last:       &model.Build{},
+		Netrc:      &model.Netrc{},
+		Secs:       []*model.Secret{},
+		GlobalSecs: []*model.GlobalSecret{},
+		Regs:       []*model.Registry{},
+		Link:       "",
 		Yamls: []*remote.FileMeta{
 			&remote.FileMeta{Data: []byte(`
 skip_clone: true
@@ -260,13 +266,14 @@ func TestZeroStepsAsMultiPipelineDeps(t *testing.T) {
 	build := &model.Build{Branch: "dev"}
 
 	b := procBuilder{
-		Repo:  &model.Repo{},
-		Curr:  build,
-		Last:  &model.Build{},
-		Netrc: &model.Netrc{},
-		Secs:  []*model.Secret{},
-		Regs:  []*model.Registry{},
-		Link:  "",
+		Repo:       &model.Repo{},
+		Curr:       build,
+		Last:       &model.Build{},
+		Netrc:      &model.Netrc{},
+		Secs:       []*model.Secret{},
+		GlobalSecs: []*model.GlobalSecret{},
+		Regs:       []*model.Registry{},
+		Link:       "",
 		Yamls: []*remote.FileMeta{
 			&remote.FileMeta{Name: "zerostep", Data: []byte(`
 skip_clone: true
@@ -308,13 +315,14 @@ func TestZeroStepsAsMultiPipelineTransitiveDeps(t *testing.T) {
 	build := &model.Build{Branch: "dev"}
 
 	b := procBuilder{
-		Repo:  &model.Repo{},
-		Curr:  build,
-		Last:  &model.Build{},
-		Netrc: &model.Netrc{},
-		Secs:  []*model.Secret{},
-		Regs:  []*model.Registry{},
-		Link:  "",
+		Repo:       &model.Repo{},
+		Curr:       build,
+		Last:       &model.Build{},
+		Netrc:      &model.Netrc{},
+		Secs:       []*model.Secret{},
+		GlobalSecs: []*model.GlobalSecret{},
+		Regs:       []*model.Registry{},
+		Link:       "",
 		Yamls: []*remote.FileMeta{
 			&remote.FileMeta{Name: "zerostep", Data: []byte(`
 skip_clone: true
@@ -362,13 +370,14 @@ func TestTree(t *testing.T) {
 	build := &model.Build{}
 
 	b := procBuilder{
-		Repo:  &model.Repo{},
-		Curr:  build,
-		Last:  &model.Build{},
-		Netrc: &model.Netrc{},
-		Secs:  []*model.Secret{},
-		Regs:  []*model.Registry{},
-		Link:  "",
+		Repo:       &model.Repo{},
+		Curr:       build,
+		Last:       &model.Build{},
+		Netrc:      &model.Netrc{},
+		Secs:       []*model.Secret{},
+		GlobalSecs: []*model.GlobalSecret{},
+		Regs:       []*model.Registry{},
+		Link:       "",
 		Yamls: []*remote.FileMeta{
 			&remote.FileMeta{Data: []byte(`
 pipeline:

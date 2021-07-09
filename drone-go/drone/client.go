@@ -37,6 +37,8 @@ const (
 	pathBuildQueue     = "%s/api/builds"
 	pathQueue          = "%s/api/queue"
 	pathVersion        = "%s/version"
+	pathGlobalSecrets  = "%s/api/globalsecrets"
+	pathGlobalSecret   = "%s/api/globalsecrets/%s"
 )
 
 type client struct {
@@ -360,6 +362,44 @@ func (c *client) QueueInfo() (*Info, error) {
 	uri := fmt.Sprintf(pathQueue+"/info", c.addr)
 	err := c.get(uri, out)
 	return out, err
+}
+
+// GlobalSecret returns a secret by name.
+func (c *client) GlobalSecret(secret string) (*Secret, error) {
+	out := new(Secret)
+	uri := fmt.Sprintf(pathGlobalSecret, c.addr, secret)
+	err := c.get(uri, out)
+	return out, err
+}
+
+// GlobalSecretList returns a list of all global secrets.
+func (c *client) GlobalSecretList() ([]*Secret, error) {
+	var out []*Secret
+	uri := fmt.Sprintf(pathGlobalSecrets, c.addr)
+	err := c.get(uri, &out)
+	return out, err
+}
+
+// GlobalSecretCreate creates a secret.
+func (c *client) GlobalSecretCreate(in *Secret) (*Secret, error) {
+	out := new(Secret)
+	uri := fmt.Sprintf(pathGlobalSecrets, c.addr)
+	err := c.post(uri, in, out)
+	return out, err
+}
+
+// GlobalSecretUpdate updates a secret.
+func (c *client) GlobalSecretUpdate(in *Secret) (*Secret, error) {
+	out := new(Secret)
+	uri := fmt.Sprintf(pathGlobalSecret, c.addr, in.Name)
+	err := c.patch(uri, in, out)
+	return out, err
+}
+
+// GlobalSecretDelete deletes a secret.
+func (c *client) GlobalSecretDelete(secret string) error {
+	uri := fmt.Sprintf(pathGlobalSecret, c.addr, secret)
+	return c.delete(uri)
 }
 
 //

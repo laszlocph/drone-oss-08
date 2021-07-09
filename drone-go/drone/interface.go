@@ -125,4 +125,19 @@ type Client interface {
 
 	// QueueInfo returns the queue state.
 	QueueInfo() (*Info, error)
+
+	// GlobalSecret returns a secret by name.
+	GlobalSecret(secret string) (*Secret, error)
+
+	// GlobalSecretList returns a list of all secrets.
+	GlobalSecretList() ([]*Secret, error)
+
+	// GlobalSecretCreate creates a secret.
+	GlobalSecretCreate(secret *Secret) (*Secret, error)
+
+	// GlobalSecretUpdate updates a secret.
+	GlobalSecretUpdate(secret *Secret) (*Secret, error)
+
+	// GlobalSecretDelete deletes a secret.
+	GlobalSecretDelete(secret string) error
 }

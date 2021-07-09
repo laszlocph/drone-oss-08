@@ -200,6 +200,14 @@ var migrations = []struct {
 		name: "update-builds-set-changed_files",
 		stmt: updateBuildsSetChangedfiles,
 	},
+	{
+		name: "create-table-global-secrets",
+		stmt: createTableGlobalSecrets,
+	},
+	{
+		name: "create-index-global-secrets-name",
+		stmt: createIndexGlobalSecretsName,
+	},
 }
 
 // Migrate performs the database migration. If the migration fails
@@ -744,4 +752,26 @@ ALTER TABLE builds ADD COLUMN changed_files TEXT
 
 var updateBuildsSetChangedfiles = `
 UPDATE builds SET changed_files='[]'
+`
+
+//
+// 025_create_table_global_secets.sql
+//
+
+var createTableGlobalSecrets = `
+CREATE TABLE IF NOT EXISTS global_secrets (
+ secret_id          INTEGER PRIMARY KEY AUTO_INCREMENT
+,secret_name        VARCHAR(250)
+,secret_value       MEDIUMBLOB
+,secret_images      VARCHAR(2000)
+,secret_events      VARCHAR(2000)
+,secret_skip_verify BOOLEAN
+,secret_conceal     BOOLEAN
+
+,UNIQUE(secret_name)
+);
+`
+
+var createIndexGlobalSecretsName = `
+CREATE INDEX ix_globalsecrets_name  ON global_secrets  (secret_name);
 `

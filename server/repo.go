@@ -1,4 +1,5 @@
 // Copyright 2018 Drone.IO Inc.
+// Copyright 2021 Informatyka Boguslawski sp. z o.o. sp.k., http://www.ib.pl/
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +12,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//
+// This file has been modified by Informatyka Boguslawski sp. z o.o. sp.k.
 
 package server
 
@@ -73,9 +76,14 @@ func PostRepo(c *gin.Context) {
 		return
 	}
 
+	host := httputil.GetURL(c.Request)
+	if Config.Server.HostInternal != "" {
+		host = Config.Server.HostInternal
+	}
+
 	link := fmt.Sprintf(
 		"%s/hook?access_token=%s",
-		httputil.GetURL(c.Request),
+		host,
 		sig,
 	)
 
@@ -203,7 +211,12 @@ func DeleteRepo(c *gin.Context) {
 		}
 	}
 
-	remote.Deactivate(user, repo, httputil.GetURL(c.Request))
+	host := httputil.GetURL(c.Request)
+	if Config.Server.HostInternal != "" {
+		host = Config.Server.HostInternal
+	}
+
+	remote.Deactivate(user, repo, host)
 	c.JSON(200, repo)
 }
 
@@ -222,6 +235,10 @@ func RepairRepo(c *gin.Context) {
 
 	// reconstruct the link
 	host := httputil.GetURL(c.Request)
+	if Config.Server.HostInternal != "" {
+		host = Config.Server.HostInternal
+	}
+
 	link := fmt.Sprintf(
 		"%s/hook?access_token=%s",
 		host,
@@ -308,6 +325,10 @@ func MoveRepo(c *gin.Context) {
 
 	// reconstruct the link
 	host := httputil.GetURL(c.Request)
+	if Config.Server.HostInternal != "" {
+		host = Config.Server.HostInternal
+	}
+
 	link := fmt.Sprintf(
 		"%s/hook?access_token=%s",
 		host,

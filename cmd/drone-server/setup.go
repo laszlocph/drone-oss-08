@@ -1,4 +1,5 @@
 // Copyright 2018 Drone.IO Inc.
+// Copyright 2021 Informatyka Boguslawski sp. z o.o. sp.k., http://www.ib.pl/
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +12,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//
+// This file has been modified by Informatyka Boguslawski sp. z o.o. sp.k.
 
 package main
 
@@ -119,12 +122,14 @@ func setupGogs(c *cli.Context) (remote.Remote, error) {
 func setupGitea(c *cli.Context) (remote.Remote, error) {
 	if !c.IsSet("gitea-client") {
 		return gitea.New(gitea.Opts{
-			URL:         c.String("gitea-server"),
-			Context:     c.String("gitea-context"),
-			Username:    c.String("gitea-git-username"),
-			Password:    c.String("gitea-git-password"),
-			PrivateMode: c.Bool("gitea-private-mode"),
-			SkipVerify:  c.Bool("gitea-skip-verify"),
+			URL:                c.String("gitea-server"),
+			Context:            c.String("gitea-context"),
+			Username:           c.String("gitea-git-username"),
+			Password:           c.String("gitea-git-password"),
+			PrivateMode:        c.Bool("gitea-private-mode"),
+			SkipVerify:         c.Bool("gitea-skip-verify"),
+			RevProxyAuth:       c.Bool("gitea-rev-proxy-auth"),
+			RevProxyAuthHeader: c.String("gitea-rev-proxy-auth-header"),
 		})
 	}
 	return gitea.NewOauth(gitea.Opts{

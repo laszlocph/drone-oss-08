@@ -33,24 +33,29 @@ import (
 
 // Opts defines configuration options.
 type Opts struct {
-	URL         string // Gitea server url.
-	Context     string // Context to display in status check
-	Client      string // OAuth2 Client ID
-	Secret      string // OAuth2 Client Secret
-	Username    string // Optional machine account username.
-	Password    string // Optional machine account password.
-	PrivateMode bool   // Gitea is running in private mode.
-	SkipVerify  bool   // Skip ssl verification.
+	URL                string // Gitea server url.
+	Context            string // Context to display in status check
+	Client             string // OAuth2 Client ID
+	Secret             string // OAuth2 Client Secret
+	Username           string // Optional machine account username.
+	Password           string // Optional machine account password.
+	PrivateMode        bool   // Gitea is running in private mode.
+	SkipVerify         bool   // Skip ssl verification.
+	RevProxyAuth       bool   // Enable reverse proxy authentication using RevProxyAuthHeader.
+	RevProxyAuthHeader string // Name of HTTP header with username for reverse proxy authentication.
 }
 
 type client struct {
-	URL         string
-	Context     string
-	Machine     string
-	Username    string
-	Password    string
-	PrivateMode bool
-	SkipVerify  bool
+	URL                     string
+	Context                 string
+	Machine                 string
+	Username                string
+	Password                string
+	PrivateMode             bool
+	SkipVerify              bool
+	RevProxyAuth            bool
+	RevProxyAuthHeader      string
+	RevProxyAuthHeaderValue string
 }
 
 const (
@@ -119,26 +124,36 @@ func New(opts Opts) (remote.Remote, error) {
 		url.Host = host
 	}
 	return &client{
-		URL:         opts.URL,
-		Context:     opts.Context,
-		Machine:     url.Host,
-		Username:    opts.Username,
-		Password:    opts.Password,
-		PrivateMode: opts.PrivateMode,
-		SkipVerify:  opts.SkipVerify,
+		URL:                opts.URL,
+		Context:            opts.Context,
+		Machine:            url.Host,
+		Username:           opts.Username,
+		Password:           opts.Password,
+		PrivateMode:        opts.PrivateMode,
+		SkipVerify:         opts.SkipVerify,
+		RevProxyAuth:       opts.RevProxyAuth,
+		RevProxyAuthHeader: opts.RevProxyAuthHeader,
 	}, nil
 }
 
 // Login authenticates an account with Gitea using basic authentication. The
 // Gitea account details are returned when the user is successfully authenticated.
 func (c *client) Login(res http.ResponseWriter, req *http.Request) (*model.User, error) {
-	var (
+
+	var username string
+	var password string
+
+	if c.RevProxyAuth {
+		username = req.Header.Get(c.RevProxyAuthHeader)
+		c.RevProxyAuthHeaderValue = username
+		password = ""
+	} else {
 		username = req.FormValue("username")
 		password = req.FormValue("password")
-	)
+	}
 
-	// if the username or password is empty we re-direct to the login screen.
-	if len(username) == 0 || len(password) == 0 {
+	// Redirect to the login screen if user credentials are incomplete.
+	if len(username) == 0 || (!c.RevProxyAuth && len(password) == 0) {
 		http.Redirect(res, req, "/login/form", http.StatusSeeOther)
 		return nil, nil
 	}
@@ -426,12 +441,37 @@ func (c *client) Hook(r *http.Request) (*model.Repo, *model.Build, error) {
 	return parseHook(r)
 }
 
+// authTransport forwards authentication HTTP header to gitea.
+type authTransport struct {
+	headerName          string
+	headerValue         string
+	underlyingTransport http.RoundTripper
+}
+
+func (t *authTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	req.Header.Add(t.headerName, t.headerValue)
+	if t.underlyingTransport != nil {
+		return t.underlyingTransport.RoundTrip(req)
+	} else {
+		return http.DefaultTransport.RoundTrip(req)
+	}
+}
+
 // helper function to return the Gitea client with Token
 func (c *client) newClientToken(token string) (*gitea.Client, error) {
 	httpClient := &http.Client{}
 	if c.SkipVerify {
 		httpClient.Transport = &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		}
+	}
+	// Forward authentication header in every HTTP request to Gitea
+	// in reverse proxy authentication mode.
+	if c.RevProxyAuth {
+		httpClient.Transport = &authTransport{
+			headerName:          c.RevProxyAuthHeader,
+			headerValue:         c.RevProxyAuthHeaderValue,
+			underlyingTransport: httpClient.Transport,
 		}
 	}
 	return gitea.NewClient(c.URL, gitea.SetToken(token), gitea.SetHTTPClient(httpClient))

@@ -1,4 +1,5 @@
 // Copyright 2018 Drone.IO Inc.
+// Copyright 2021 Informatyka Boguslawski sp. z o.o. sp.k., http://www.ib.pl/
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +12,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//
+// This file has been modified by Informatyka Boguslawski sp. z o.o. sp.k.
 
 package main
 
@@ -72,6 +75,18 @@ func server(c *cli.Context) error {
 	if strings.HasSuffix(c.String("server-host"), "/") {
 		logrus.Fatalln(
 			"DRONE_HOST/DRONE_SERVER_HOST/WOODPECKER_HOST/WOODPECKER_SERVER_HOST must not have trailing slash",
+		)
+	}
+
+	if c.String("server-host-internal") != "" && !strings.Contains(c.String("server-host-internal"), "://") {
+		logrus.Fatalln(
+			"WOODPECKER_HOST_INTERNAL must be <scheme>://<hostname> format",
+		)
+	}
+
+	if c.String("server-host-internal") != "" && strings.HasSuffix(c.String("server-host-internal"), "/") {
+		logrus.Fatalln(
+			"WOODPECKER_HOST_INTERNAL must not have trailing slash",
 		)
 	}
 
@@ -225,6 +240,7 @@ func setupEvilGlobals(c *cli.Context, v store.Store, r remote.Remote) {
 	droneserver.Config.Server.Key = c.String("server-key")
 	droneserver.Config.Server.Pass = c.String("agent-secret")
 	droneserver.Config.Server.Host = strings.TrimRight(c.String("server-host"), "/")
+	droneserver.Config.Server.HostInternal = strings.TrimRight(c.String("server-host-internal"), "/")
 	droneserver.Config.Server.Port = c.String("server-addr")
 	droneserver.Config.Server.RepoConfig = c.String("repo-config")
 	droneserver.Config.Server.SessionExpires = c.Duration("session-expires")

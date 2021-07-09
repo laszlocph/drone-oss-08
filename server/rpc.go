@@ -71,6 +71,7 @@ var Config = struct {
 		Key            string
 		Cert           string
 		Host           string
+		HostInternal   string
 		Port           string
 		Pass           string
 		RepoConfig     string
